@@ -3,10 +3,15 @@ import { useState } from "react";
 
 function App() {
   const [text, setText] = useState(
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+    "[U][B]He[/B]llo[/U] [U]Sam[/U]"
+    // "hello"
+    // "[B]He[/B]ell[B]o[/B]"
+    // "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
   );
-  const [width, setWidth] = useState(10);
-  const [speed, setSpeed] = useState(10);
+
+  // [B]H[/B]ello
+  const [width, setWidth] = useState(15);
+  const [speed, setSpeed] = useState(5);
   const [start, setStart] = useState(false);
 
   return (
@@ -76,7 +81,7 @@ function App() {
         </div>
       ) : (
         <div className="flex justify-center my-4">
-          <div className={` w-52 h-28 flex justify-end border-2`}></div>
+          {/* <div className={` w-1/3 h-28 border-2 bg-white`}></div> */}
         </div>
       )}
     </div>

@@ -16,7 +16,7 @@ const Display = ({ speed, width, text }) => {
 
   useEffect(() => {
 
-    while (text.includes("[/C]")) {
+    while (text.includes("[C:")) {
       while (text.includes("[U]")) {
         text = text.replace("[U]", "");
         text = text.replace("[/U]", "");

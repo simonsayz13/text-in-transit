@@ -3,13 +3,15 @@ import { useState } from "react";
 
 function App() {
   const [text, setText] = useState(
-    "[U][B]He[/B]llo[/U] [U]Sam[/U]"
-    // "hello"
+    // "[C:#FF0000][B]A[/B][/C][C:#00FF00][U]B[/U][/C]"
+    "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
+    // "[C:#FF0000]Red[/C] - [C:#00FF00]Green[/C]"
+    // "[C:#FF0000][B]depart[/B][/C] [C:#00FF00]on [U]time[/U][/C]"
+    // "[U][B]He[/B]l[B]l[/B]o[/U] Sam"
     // "[B]He[/B]ell[B]o[/B]"
     // "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
   );
 
-  // [B]H[/B]ello
   const [width, setWidth] = useState(15);
   const [speed, setSpeed] = useState(5);
   const [start, setStart] = useState(false);

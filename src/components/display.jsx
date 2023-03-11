@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-// ("\xa0 ")
 const Display = ({ speed, width, text }) => {
   const [boldArray, setBoldArray] = useState([]);
   const [defaultBoldArray, setDefaultBoldArray] = useState([]);
@@ -11,13 +10,63 @@ const Display = ({ speed, width, text }) => {
   const [displayArray, setDisplayArray] = useState(
     new Array(Number(width)).fill("\xa0")
   );
-  const originalText = text
+  const originalText = text;
+  const [colourDict, setColourDict] = useState({});
+  const [defaultColourDict, setDefaultColourDict] = useState({})
 
   useEffect(() => {
-    while (text.includes("[B]")) {
+
+    while (text.includes("[/C]")) {
       while (text.includes("[U]")) {
-        text = text.replace("[U]","")
-        text = text.replace("[/U]","")
+        text = text.replace("[U]", "");
+        text = text.replace("[/U]", "");
+      }
+
+      while (text.includes("[B]")) {
+        text = text.replace("[B]", "");
+        text = text.replace("[/B]", "");
+      }
+
+      for (let i = text.indexOf("[C:"); i < text.indexOf("[/C]") - 11; i++) {
+        const colour = text.substr(text.indexOf("[C:")+3, 7)
+        setColourDict((oldDict) => ({
+          ...oldDict,
+          [i+Number(width)]: colour,
+        }));
+        setDefaultColourDict((oldDict) => ({
+          ...oldDict,
+          [i+Number(width)]: colour,
+        }));
+      }
+      
+      text =
+        text.slice(0, text.indexOf("[C:")) +
+        text.slice(text.indexOf("[C:") + 11);
+
+      text =
+        text.slice(0, text.indexOf("[/C]")) +
+        text.slice(text.indexOf("[/C]") + 4);
+      // let colourTag = text.substr(text.indexOf('[C:'), 11)
+      // let colour = text.substr(text.indexOf('[C:')+3, 7)
+      // console.log(colourTag)
+      // console.log(colour)
+    }
+
+    if (originalText.includes("[B]")) {
+      text = originalText;
+    }
+
+    while (text.includes("[B]")) {
+
+      while (text.includes("[C:")){
+        let colourTag = text.substr(text.indexOf('[C:'), 11)
+        text = text.replace(colourTag, "")
+        text = text.replace("[/C]", "")
+      }
+
+      while (text.includes("[U]")) {
+        text = text.replace("[U]", "");
+        text = text.replace("[/U]", "");
       }
       for (let i = text.indexOf("[B]"); i < text.indexOf("[/B]") - 3; i++) {
         setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
@@ -30,16 +79,28 @@ const Display = ({ speed, width, text }) => {
         text.slice(0, text.indexOf("[/B]")) +
         text.slice(text.indexOf("[/B]") + 4);
     }
-    // eslint-disable-next-line
-    text = originalText
+
+    if (originalText.includes("U")) {
+      // eslint-disable-next-line
+      text = originalText;
+    }
+
     while (text.includes("[U]")) {
       while (text.includes("[B]")) {
-        text = text.replace("[B]","")
-        text = text.replace("[/B]","")
+        text = text.replace("[B]", "");
+        text = text.replace("[/B]", "");
+      }
+      while (text.includes("[C:")){
+        let colourTag = text.substr(text.indexOf('[C:'), 11)
+        text = text.replace(colourTag, "")
+        text = text.replace("[/C]", "")
       }
       for (let i = text.indexOf("[U]"); i < text.indexOf("[/U]") - 3; i++) {
         setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
-        setDefaultUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
+        setDefaultUnderlineArray((oldArray) => [
+          ...oldArray,
+          i + Number(width),
+        ]);
       }
       text =
         text.slice(0, text.indexOf("[U]")) +
@@ -55,6 +116,7 @@ const Display = ({ speed, width, text }) => {
   }, []);
 
   useEffect(() => {
+    // console.log(colourDict)
     if (cleanText !== "") {
       if (currentChar < cleanText.length + Number(width)) {
         setTimeout(() => {
@@ -76,52 +138,43 @@ const Display = ({ speed, width, text }) => {
               return v - 1;
             })
           );
+          let newDict = {}
+          for (const [key, value] of Object.entries(colourDict)) {
+            newDict[key-1] = value
+          }
+          setColourDict(newDict)
+
         }, 1000 / Number(speed));
       } else {
         setBoldArray(defaultBoldArray);
-        setUnderlineArray(defaultUnderlineArray)
+        setUnderlineArray(defaultUnderlineArray);
+        setColourDict(defaultColourDict);
         setDisplayArray(new Array(Number(width)).fill("\xa0"));
         setCurrentChar(0);
       }
     }
     // eslint-disable-next-line
   }, [displayArray]);
-
-  // console.log('bold:',boldArray)
-  // console.log('under:',underlineArray)
   return (
     <div className={`h-28 flex justify-end border-2`}>
       {displayArray.map((value, index) => {
-        if (boldArray.includes(index) && underlineArray.includes(index)) {
-          return (
-            <p
-              className={`text-8xl text-center font-mono font-bold underline`}
-              key={index}
-            >{`${value}`}</p>
-          );
-        }
-        else if (boldArray.includes(index)) {
-          return (
-            <p
-              className={`text-8xl text-center font-mono font-bold`}
-              key={index}
-            >{`${value}`}</p>
-          );
-        } else if (underlineArray.includes(index)) {
-          return (
-            <p
-              className={`text-8xl text-center font-mono underline`}
-              key={index}
-            >{`${value}`}</p>
-          );
-        } else {
-          return (
-            <p
-              className={`text-8xl text-center font-mono`}
-              key={index}
-            >{`${value}`}</p>
-          );
-        }
+        let boldFont = "";
+        let underline = "";
+        let colour = "black";
+        boldArray.includes(index) ? (boldFont = "font-bold") : (boldFont = "");
+        underlineArray.includes(index)
+          ? (underline = "underline")
+          : (underline = "");
+        colourDict[index] !== undefined
+          ? (colour = colourDict[index])
+          : (colour = "");
+        return (
+          <p
+            className={`text-8xl text-center font-mono ${boldFont} ${underline}`}
+            style={{ color: `${colour}` }}
+            key={index}
+          >{`${value}`}</p>
+        );
       })}
     </div>
   );

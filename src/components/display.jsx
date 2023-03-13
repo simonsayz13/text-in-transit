@@ -1,5 +1,30 @@
 import { useEffect, useState } from "react";
 
+const sanitiseUTags = (text) => {
+  if (text.includes("[U]")) {
+    text = text.replace(/\[U\]/g, "");
+    text = text.replace(/\[\/U\]/g, "");
+  }
+  return text
+}
+
+const sanitiseBTags = (text) => {
+  if (text.includes("[B]")) {
+    text = text.replace(/\[B\]/g, "");
+    text = text.replace(/\[\/B\]/g, "");
+  }
+  return text
+}
+
+const santitiseCTags = (text) => {
+  while (text.includes("[C:")) {
+    let colourTag = text.substr(text.indexOf("[C:"), 11);
+    text = text.replace(colourTag, "");
+    text = text.replace("[/C]", "");
+  }
+  return text
+}
+
 const Display = ({ speed, width, text }) => {
   const [boldArray, setBoldArray] = useState([]);
   const [defaultBoldArray, setDefaultBoldArray] = useState([]);
@@ -12,65 +37,42 @@ const Display = ({ speed, width, text }) => {
   );
   const originalText = text;
   const [colourDict, setColourDict] = useState({});
-  const [defaultColourDict, setDefaultColourDict] = useState({})
+  const [defaultColourDict, setDefaultColourDict] = useState({});
+
+
 
   useEffect(() => {
+    // eslint-disable-next-line
+    text = sanitiseBTags(text)
+    text = sanitiseUTags(text)
 
+    // Parse Colour tags
     while (text.includes("[C:")) {
-      while (text.includes("[U]")) {
-        text = text.replace("[U]", "");
-        text = text.replace("[/U]", "");
-      }
-
-      while (text.includes("[B]")) {
-        text = text.replace("[B]", "");
-        text = text.replace("[/B]", "");
-      }
-
       for (let i = text.indexOf("[C:"); i < text.indexOf("[/C]") - 11; i++) {
-        const colour = text.substr(text.indexOf("[C:")+3, 7)
+        const colour = text.substr(text.indexOf("[C:") + 3, 7);
         setColourDict((oldDict) => ({
           ...oldDict,
-          [i+Number(width)]: colour,
+          [i + Number(width)]: colour,
         }));
         setDefaultColourDict((oldDict) => ({
           ...oldDict,
-          [i+Number(width)]: colour,
+          [i + Number(width)]: colour,
         }));
       }
-      
       text =
         text.slice(0, text.indexOf("[C:")) +
         text.slice(text.indexOf("[C:") + 11);
-
       text =
         text.slice(0, text.indexOf("[/C]")) +
         text.slice(text.indexOf("[/C]") + 4);
-
-      console.log(text)
-      
-      // let colourTag = text.substr(text.indexOf('[C:'), 11)
-      // let colour = text.substr(text.indexOf('[C:')+3, 7)
-      // console.log(colourTag)
-      // console.log(colour)
-    }
-    
-    if (originalText.includes("[B]")) {
-      text = originalText;
     }
 
+    // eslint-disable-next-line
+    text = santitiseCTags(originalText)
+    text = sanitiseUTags(text)
+
+    // Parse bold tags
     while (text.includes("[B]")) {
-
-      while (text.includes("[C:")){
-        let colourTag = text.substr(text.indexOf('[C:'), 11)
-        text = text.replace(colourTag, "")
-        text = text.replace("[/C]", "")
-      }
-
-      while (text.includes("[U]")) {
-        text = text.replace("[U]", "");
-        text = text.replace("[/U]", "");
-      }
       for (let i = text.indexOf("[B]"); i < text.indexOf("[/B]") - 3; i++) {
         setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
         setDefaultBoldArray((oldArray) => [...oldArray, i + Number(width)]);
@@ -82,22 +84,12 @@ const Display = ({ speed, width, text }) => {
         text.slice(0, text.indexOf("[/B]")) +
         text.slice(text.indexOf("[/B]") + 4);
     }
+    // eslint-disable-next-line
+    text = sanitiseBTags(originalText)
+    text = santitiseCTags(text)
 
-    if (originalText.includes("U")) {
-      // eslint-disable-next-line
-      text = originalText;
-    }
-
+    // Parse Underline tags
     while (text.includes("[U]")) {
-      while (text.includes("[B]")) {
-        text = text.replace("[B]", "");
-        text = text.replace("[/B]", "");
-      }
-      while (text.includes("[C:")){
-        let colourTag = text.substr(text.indexOf('[C:'), 11)
-        text = text.replace(colourTag, "")
-        text = text.replace("[/C]", "")
-      }
       for (let i = text.indexOf("[U]"); i < text.indexOf("[/U]") - 3; i++) {
         setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
         setDefaultUnderlineArray((oldArray) => [
@@ -112,7 +104,6 @@ const Display = ({ speed, width, text }) => {
         text.slice(0, text.indexOf("[/U]")) +
         text.slice(text.indexOf("[/U]") + 4);
     }
-
     setCleanText(text);
     // Start initiate the arrray.
     setDisplayArray(new Array(Number(width)).fill("\xa0"));
@@ -141,12 +132,11 @@ const Display = ({ speed, width, text }) => {
               return v - 1;
             })
           );
-          let newDict = {}
+          let newDict = {};
           for (const [key, value] of Object.entries(colourDict)) {
-            newDict[key-1] = value
+            newDict[key - 1] = value;
           }
-          setColourDict(newDict)
-
+          setColourDict(newDict);
         }, 1000 / Number(speed));
       } else {
         setBoldArray(defaultBoldArray);

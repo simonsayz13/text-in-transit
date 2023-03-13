@@ -3,15 +3,17 @@ import { useState } from "react";
 
 function App() {
   const [text, setText] = useState(
+    "[C:#FF0000]All of this [C:#e834eb]text[/C] is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
     // "[C:#FF0000]red text [C:#00FF00]and[/C] [C:#0000FF]blue text[/C][/C]"
-    "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C] [C:#00FF00]And [U]this[/U] is [B]Green[/B].[/C]"
-    // "[C:#FF0000][B]A[/B][/C][C:#00FF00][U]B[/U][/C]"
+    // "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C] [C:#00FF00]And [U]this[/U] is [B]Green[/B].[/C]"
+    // "[C:#FF0000][B]B[/B][/C][C:#00FF00][U]B[/U][/C]"
     // "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
     // "[C:#FF0000]Red[/C] - [C:#00FF00]Green[/C]"
     // "[C:#FF0000][B]depart[/B][/C] [C:#00FF00]on [U]time[/U][/C]"
     // "[U][B]He[/B]l[B]l[/B]o[/U] Sam"
     // "[B]He[/B]ell[B]o[/B]"
  );
+
 
   const [width, setWidth] = useState(15);
   const [speed, setSpeed] = useState(10);

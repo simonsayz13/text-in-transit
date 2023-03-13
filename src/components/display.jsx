@@ -46,12 +46,15 @@ const Display = ({ speed, width, text }) => {
       text =
         text.slice(0, text.indexOf("[/C]")) +
         text.slice(text.indexOf("[/C]") + 4);
+
+      console.log(text)
+      
       // let colourTag = text.substr(text.indexOf('[C:'), 11)
       // let colour = text.substr(text.indexOf('[C:')+3, 7)
       // console.log(colourTag)
       // console.log(colour)
     }
-
+    
     if (originalText.includes("[B]")) {
       text = originalText;
     }
@@ -156,7 +159,7 @@ const Display = ({ speed, width, text }) => {
     // eslint-disable-next-line
   }, [displayArray]);
   return (
-    <div className={`h-28 flex justify-end border-2`}>
+    <div className={`h-28 flex justify-end border-2 w-auto`}>
       {displayArray.map((value, index) => {
         let boldFont = "";
         let underline = "";

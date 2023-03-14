@@ -5,14 +5,14 @@ const Display = ({ speed, width, text }) => {
   const [defaultBoldArray, setDefaultBoldArray] = useState([]);
   const [underlineArray, setUnderlineArray] = useState([]);
   const [defaultUnderlineArray, setDefaultUnderlineArray] = useState([]);
+  const [colourDict, setColourDict] = useState({});
+  const [defaultColourDict, setDefaultColourDict] = useState({});
   const [currentChar, setCurrentChar] = useState(0);
   const [cleanText, setCleanText] = useState("");
   const [displayArray, setDisplayArray] = useState(
     new Array(Number(width)).fill("\xa0")
   );
   const originalText = text;
-  const [colourDict, setColourDict] = useState({});
-  const [defaultColourDict, setDefaultColourDict] = useState({});
 
   useEffect(() => {
     // eslint-disable-next-line
@@ -64,19 +64,19 @@ const Display = ({ speed, width, text }) => {
 
     // Parse bold tags
     if (/\[[bB]\]/g.test(text)) {
-      let boldFlag = false;
+      let tempBoldStack = []
       let tempArray = [];
       for (let i = 0; i < textWithoutTags.length + 4; i++) {
         if (/\[[bB]\]/g.test(text.substr(i, 3))) {
-          boldFlag = true;
+          tempBoldStack.push('b')
           text = text.slice(0, i) + text.slice(i + 3);
           i -= 1;
         } else if (/\[\/[bB]\]/g.test(text.substr(i, 4))) {
-          boldFlag = false;
+          tempBoldStack.pop()
           text = text.slice(0, i) + text.slice(i + 4);
           i -= 1;
         } else {
-          if (boldFlag && !tempArray.includes(i + Number(width))) {
+          if (tempBoldStack.includes('b') && !tempArray.includes(i + Number(width))) {
             tempArray.push(i + Number(width));
             setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
             setDefaultBoldArray((oldArray) => [...oldArray, i + Number(width)]);
@@ -92,19 +92,19 @@ const Display = ({ speed, width, text }) => {
 
     // Parse underline tags
     if (/\[[uU]\]/g.test(text)) {
-      let underlineFlag = false;
+      let tempUnderlineStack = [];
       let tempArray = [];
       for (let i = 0; i < textWithoutTags.length + 4; i++) {
         if (/\[[uU]\]/g.test(text.substr(i, 3))) {
-          underlineFlag = true;
+          tempUnderlineStack.push('u')
           text = text.slice(0, i) + text.slice(i + 3);
           i -= 1;
         } else if (/\[\/[uU]\]/g.test(text.substr(i, 4))) {
-          underlineFlag = false;
+          tempUnderlineStack.pop()
           text = text.slice(0, i) + text.slice(i + 4);
           i -= 1;
         } else {
-          if (underlineFlag && !tempArray.includes(i + Number(width))) {
+          if (tempUnderlineStack.includes('u') && !tempArray.includes(i + Number(width))) {
             tempArray.push(i + Number(width));
             setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
             setDefaultUnderlineArray((oldArray) => [

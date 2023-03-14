@@ -17,13 +17,12 @@ function App() {
     // "[C:#FF0000][B]depart[/B][/C] [C:#00FF00]on [U]time[/U][/C]"
     // "[U][B]He[/B]l[B]l[/B]o[/U] Sam"
     // "[B]He[/B]ell[B]o[/B]"
- );
-
+  );
 
   const [width, setWidth] = useState(15);
   const [speed, setSpeed] = useState(10);
   const [start, setStart] = useState(false);
-  const [inputIsDisabled, setInputIsDisabled] = useState(false)
+  const [inputIsDisabled, setInputIsDisabled] = useState(false);
   return (
     <div className="justify-center flex-col">
       <p className=" text-center text-4xl font-bold my-4">Text In Transit</p>
@@ -72,7 +71,7 @@ function App() {
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
               setStart(true);
-              setInputIsDisabled(true)
+              setInputIsDisabled(true);
             }}
           >
             Start
@@ -83,7 +82,7 @@ function App() {
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => {
               setStart(false);
-              setInputIsDisabled(false)
+              setInputIsDisabled(false);
             }}
           >
             Reset
@@ -95,9 +94,10 @@ function App() {
           <Display text={text} speed={speed} width={width} />
         </div>
       ) : (
-        <div className="flex justify-center my-4">
-          {/* <div className={` w-1/3 h-28 border-2 bg-white`}></div> */}
-        </div>
+        <></>
+        // <div className="justify-center my-4 mx-56">
+        //   <div className={`flex h-28 border-2 bg-white`}></div>
+        // </div>
       )}
     </div>
   );

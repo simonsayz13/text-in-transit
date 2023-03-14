@@ -29,15 +29,23 @@ npm start
 
 # Usage
 
-1) Set the following parameters as prompt in the UI. ()
+1) Set the following parameters as prompt in the UI.
 
-- **Text** (Text to be display)
-- **Width** (Amount of character displayed at once)
-- **Speed**  (Scrolling speed >= 1) 
+    * <span style="color:orange">**Text**</span> (Text to be display)
+      * **Bold** tags - [B]Example[/B]
+      * **Underline** tags - [U]Example Text[/U]
+      * **Colour** tags (HTML colour as 6 Hex-digits) - [C:#FF0000]Example Text[/C]
+
+      <span style="color:red">Note that tags are not case sentive<span>
+    * <span style="color:orange">**Width**</span> (Amount of character displayed at once)
+    * <span style="color:orange">**Speed**</span>  (Scrolling speed >= 1) 
+
+2) Press <span style="color:green">**Start**</span> and watch it scroll
+3) Press <span style="color:red">**Stop**</span> to adjust text, width or speed.
 
 default **Text**:
 ```
-"[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C] [C:#00FF00]And [U]this[/U] is [B]Green[/B].[/C]"
+"[C:#BD11bd][B][b][u]A[/U]a[/b][/B]a[C:#00FF00]b[C:#0000FF]c[/C][/C][/C][u][B]c[/B][U]A[/u][/U]"
 ```
 Default **Width**:
 ```
@@ -47,6 +55,3 @@ Default **Speed**:
 ```
 10
 ```
-
-2) Press **Start** and watch it scroll
-3) Press **Stop** to adjust text, width or speed.

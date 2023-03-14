@@ -5,16 +5,16 @@ const sanitiseUTags = (text) => {
     text = text.replace(/\[U\]/g, "");
     text = text.replace(/\[\/U\]/g, "");
   }
-  return text
-}
+  return text;
+};
 
 const sanitiseBTags = (text) => {
   if (text.includes("[B]")) {
     text = text.replace(/\[B\]/g, "");
     text = text.replace(/\[\/B\]/g, "");
   }
-  return text
-}
+  return text;
+};
 
 const santitiseCTags = (text) => {
   while (text.includes("[C:")) {
@@ -22,8 +22,8 @@ const santitiseCTags = (text) => {
     text = text.replace(colourTag, "");
     text = text.replace("[/C]", "");
   }
-  return text
-}
+  return text;
+};
 
 const Display = ({ speed, width, text }) => {
   const [boldArray, setBoldArray] = useState([]);
@@ -39,37 +39,50 @@ const Display = ({ speed, width, text }) => {
   const [colourDict, setColourDict] = useState({});
   const [defaultColourDict, setDefaultColourDict] = useState({});
 
-
-
   useEffect(() => {
     // eslint-disable-next-line
-    text = sanitiseBTags(text)
-    text = sanitiseUTags(text)
+    text = sanitiseBTags(text);
+    text = sanitiseUTags(text);
+    let textWithoutTags = santitiseCTags(text);
+    let colourStack = ["#000000"];
 
-    // Parse Colour tags
-    while (text.includes("[C:")) {
-      for (let i = text.indexOf("[C:"); i < text.indexOf("[/C]") - 11; i++) {
-        const colour = text.substr(text.indexOf("[C:") + 3, 7);
-        setColourDict((oldDict) => ({
-          ...oldDict,
-          [i + Number(width)]: colour,
-        }));
-        setDefaultColourDict((oldDict) => ({
-          ...oldDict,
-          [i + Number(width)]: colour,
-        }));
+    // Parse colour tags
+    if (text.includes("[/C]")) {
+      // console.log(text);
+      for (let i = 0; i < textWithoutTags.length; i++) {
+        if (text.substr(i, 3) === "[C:") {
+          colourStack.push(text.substr(i + 3, 7));
+          text = text.slice(0, i) + text.slice(i + 11);
+          const colour = colourStack[colourStack.length - 1];
+          setColourDict((oldDict) => ({
+            ...oldDict,
+            [i + Number(width)]: colour,
+          }));
+          setDefaultColourDict((oldDict) => ({
+            ...oldDict,
+            [i + Number(width)]: colour,
+          }));
+        } else if (text.substr(i, 4) === "[/C]") {
+          colourStack.pop();
+          text = text.slice(0, i) + text.slice(i + 4);
+          i -= 1;
+        } else {
+          const colour = colourStack[colourStack.length - 1];
+          setColourDict((oldDict) => ({
+            ...oldDict,
+            [i + Number(width)]: colour,
+          }));
+          setDefaultColourDict((oldDict) => ({
+            ...oldDict,
+            [i + Number(width)]: colour,
+          }));
+        }
       }
-      text =
-        text.slice(0, text.indexOf("[C:")) +
-        text.slice(text.indexOf("[C:") + 11);
-      text =
-        text.slice(0, text.indexOf("[/C]")) +
-        text.slice(text.indexOf("[/C]") + 4);
     }
 
     // eslint-disable-next-line
-    text = santitiseCTags(originalText)
-    text = sanitiseUTags(text)
+    text = santitiseCTags(originalText);
+    text = sanitiseUTags(text);
 
     // Parse bold tags
     while (text.includes("[B]")) {
@@ -85,10 +98,10 @@ const Display = ({ speed, width, text }) => {
         text.slice(text.indexOf("[/B]") + 4);
     }
     // eslint-disable-next-line
-    text = sanitiseBTags(originalText)
-    text = santitiseCTags(text)
+    text = sanitiseBTags(originalText);
+    text = santitiseCTags(text);
 
-    // Parse Underline tags
+    // Parse underline tags
     while (text.includes("[U]")) {
       for (let i = text.indexOf("[U]"); i < text.indexOf("[/U]") - 3; i++) {
         setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
@@ -108,9 +121,8 @@ const Display = ({ speed, width, text }) => {
     // Start initiate the arrray.
     setDisplayArray(new Array(Number(width)).fill("\xa0"));
   }, []);
-
+  
   useEffect(() => {
-    // console.log(colourDict)
     if (cleanText !== "") {
       if (currentChar < cleanText.length + Number(width)) {
         setTimeout(() => {
@@ -148,19 +160,20 @@ const Display = ({ speed, width, text }) => {
     }
     // eslint-disable-next-line
   }, [displayArray]);
+
   return (
     <div className={`h-28 flex justify-end border-2 w-auto`}>
       {displayArray.map((value, index) => {
         let boldFont = "";
         let underline = "";
-        let colour = "black";
+        let colour = "#000000";
         boldArray.includes(index) ? (boldFont = "font-bold") : (boldFont = "");
         underlineArray.includes(index)
           ? (underline = "underline")
           : (underline = "");
         colourDict[index] !== undefined
           ? (colour = colourDict[index])
-          : (colour = "");
+          : (colour = "#000000");
         return (
           <p
             className={`text-8xl text-center font-mono ${boldFont} ${underline}`}

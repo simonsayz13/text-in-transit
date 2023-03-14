@@ -3,9 +3,11 @@ import { useState } from "react";
 
 function App() {
   const [text, setText] = useState(
-    "[C:#FF0000]All of this [C:#e834eb]text[/C] is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
+    // "[C:#FF0000]R[C:#00FF00][U][U]G[/U][/U][C:#0000FF]B[/C][/C][/C]"
+    // "[C:#FF0000]R[C:#0000FF]B[/C][/C][C:#00FF00]G[/C]"
+    // "[C:#FF0000]All of this [C:#e834eb]text[/C] is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
     // "[C:#FF0000]red text [C:#00FF00]and[/C] [C:#0000FF]blue text[/C][/C]"
-    // "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C] [C:#00FF00]And [U]this[/U] is [B]Green[/B].[/C]"
+    "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C] [C:#00FF00]And [U]this[/U] is [B]Green[/B].[/C]"
     // "[C:#FF0000][B]B[/B][/C][C:#00FF00][U]B[/U][/C]"
     // "[C:#FF0000]All of this text is Red, but [C:#0000FF][B][U]THIS[/U][/B] text is Blue.[/C][/C]"
     // "[C:#FF0000]Red[/C] - [C:#00FF00]Green[/C]"

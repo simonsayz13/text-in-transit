@@ -85,43 +85,65 @@ const Display = ({ speed, width, text }) => {
     text = sanitiseUTags(text);
 
     // Parse bold tags
-    while (text.includes("[B]")) {
-      for (let i = text.indexOf("[B]"); i < text.indexOf("[/B]") - 3; i++) {
-        setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
-        setDefaultBoldArray((oldArray) => [...oldArray, i + Number(width)]);
+    if (text.includes("[B]")) {
+      let boldFlag = false;
+      let tempArray = []
+      for (let i = 0; i < textWithoutTags.length + 4; i++) {
+        if (text.substr(i, 3) === "[B]") {
+          boldFlag = true;
+          text = text.slice(0, i) + text.slice(i + 3);
+          i-=1
+        } else if (text.substr(i, 4) === "[/B]") {
+          boldFlag = false;
+          text = text.slice(0, i) + text.slice(i + 4);
+          i-=1
+        } else {
+          if (boldFlag && !tempArray.includes(i + Number(width))) {
+            tempArray.push(i + Number(width))
+            setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
+            setDefaultBoldArray((oldArray) => [
+              ...oldArray,
+              i + Number(width),
+            ]);
+          }
+        }
       }
-      text =
-        text.slice(0, text.indexOf("[B]")) +
-        text.slice(text.indexOf("[B]") + 3);
-      text =
-        text.slice(0, text.indexOf("[/B]")) +
-        text.slice(text.indexOf("[/B]") + 4);
     }
     // eslint-disable-next-line
     text = sanitiseBTags(originalText);
     text = santitiseCTags(text);
 
     // Parse underline tags
-    while (text.includes("[U]")) {
-      for (let i = text.indexOf("[U]"); i < text.indexOf("[/U]") - 3; i++) {
-        setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
-        setDefaultUnderlineArray((oldArray) => [
-          ...oldArray,
-          i + Number(width),
-        ]);
+    if (text.includes("[U]")) {
+      let underlineFlag = false;
+      let tempArray = []
+      for (let i = 0; i < textWithoutTags.length + 4; i++) {
+        if (text.substr(i, 3) === "[U]") {
+          underlineFlag = true;
+          text = text.slice(0, i) + text.slice(i + 3);
+          i-=1
+        } else if (text.substr(i, 4) === "[/U]") {
+          underlineFlag = false;
+          text = text.slice(0, i) + text.slice(i + 4);
+          i-=1
+        } else {
+          if (underlineFlag && !tempArray.includes(i + Number(width))) {
+            tempArray.push(i + Number(width))
+            setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
+            setDefaultUnderlineArray((oldArray) => [
+              ...oldArray,
+              i + Number(width),
+            ]);
+          }
+        }
       }
-      text =
-        text.slice(0, text.indexOf("[U]")) +
-        text.slice(text.indexOf("[U]") + 3);
-      text =
-        text.slice(0, text.indexOf("[/U]")) +
-        text.slice(text.indexOf("[/U]") + 4);
     }
     setCleanText(text);
+
     // Start initiate the arrray.
     setDisplayArray(new Array(Number(width)).fill("\xa0"));
   }, []);
-  
+  console.log(boldArray);
   useEffect(() => {
     if (cleanText !== "") {
       if (currentChar < cleanText.length + Number(width)) {
@@ -160,7 +182,7 @@ const Display = ({ speed, width, text }) => {
     }
     // eslint-disable-next-line
   }, [displayArray]);
-
+  // console.log(underlineArray);
   return (
     <div className={`h-28 flex justify-end border-2 w-auto`}>
       {displayArray.map((value, index) => {

@@ -3,7 +3,8 @@ import { useState } from "react";
 
 function App() {
   const [text, setText] = useState(
-    "[C:#FF0000][B][B]A[/B][/B][/C][C:#00FF00]b[C:#0000FF]c[/C][/C][U][B]c[/B][U]A[/U][/U]"
+    // "[C:#FF0000]RED[/C] and [C:#0000FF][b]Blue[/b][/C]"
+    "[C:#BD11bd][B][b][u]A[/U]a[/b][/B]a[C:#00FF00]b[C:#0000FF]c[/C][/C][/C][u][B]c[/B][U]A[/u][/U]"
     // "[U][U]AB[/U][/U]C[U]D[/U]"
     // "[C:#FF0000]R[C:#00FF00][U][U]G[/U][/U][C:#0000FF]B[/C][/C][/C]"
     // "[C:#FF0000]R[C:#0000FF]B[/C][/C][C:#00FF00]G[/C]"
@@ -32,7 +33,7 @@ function App() {
           <input
             type="Text"
             className="border-2 rounded"
-            placeholder="[C:#FF0000][B][B]A[/B][/B][/C][C:#00FF00]b[C:#0000FF]c[/C][/C][U][B]c[/B][U]A[/U][/U]"
+            placeholder={text}
             onChange={(textInput) => {
               setText(textInput.target.value);
             }}

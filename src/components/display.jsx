@@ -1,30 +1,5 @@
 import { useEffect, useState } from "react";
 
-const sanitiseUTags = (text) => {
-  if (text.includes("[U]")) {
-    text = text.replace(/\[U\]/g, "");
-    text = text.replace(/\[\/U\]/g, "");
-  }
-  return text;
-};
-
-const sanitiseBTags = (text) => {
-  if (text.includes("[B]")) {
-    text = text.replace(/\[B\]/g, "");
-    text = text.replace(/\[\/B\]/g, "");
-  }
-  return text;
-};
-
-const santitiseCTags = (text) => {
-  while (text.includes("[C:")) {
-    let colourTag = text.substr(text.indexOf("[C:"), 11);
-    text = text.replace(colourTag, "");
-    text = text.replace("[/C]", "");
-  }
-  return text;
-};
-
 const Display = ({ speed, width, text }) => {
   const [boldArray, setBoldArray] = useState([]);
   const [defaultBoldArray, setDefaultBoldArray] = useState([]);
@@ -41,16 +16,17 @@ const Display = ({ speed, width, text }) => {
 
   useEffect(() => {
     // eslint-disable-next-line
-    text = sanitiseBTags(text);
-    text = sanitiseUTags(text);
-    let textWithoutTags = santitiseCTags(text);
+    text = text.replace(/\[\/*(([uU])|([bB]))\]/g, "");
+
+    //Sanitise C tags
+    let textWithoutTags = text.replace(/\[\/*[cC](:#[a-zA-Z0-9]{6})*\]/g, "");
     let colourStack = ["#000000"];
 
     // Parse colour tags
-    if (text.includes("[/C]")) {
+    if (/\[\/*[cC](:#[a-zA-Z0-9]{6})*\]/g.test(text)) {
       // console.log(text);
       for (let i = 0; i < textWithoutTags.length; i++) {
-        if (text.substr(i, 3) === "[C:") {
+        if (/\[[cC](:#[a-zA-Z0-9]{6})*\]/g.test(text.substr(i, 11))) {
           colourStack.push(text.substr(i + 3, 7));
           text = text.slice(0, i) + text.slice(i + 11);
           const colour = colourStack[colourStack.length - 1];
@@ -62,7 +38,7 @@ const Display = ({ speed, width, text }) => {
             ...oldDict,
             [i + Number(width)]: colour,
           }));
-        } else if (text.substr(i, 4) === "[/C]") {
+        } else if (/\[\/[cC]\]/g.test(text.substr(i, 4))) {
           colourStack.pop();
           text = text.slice(0, i) + text.slice(i + 4);
           i -= 1;
@@ -81,54 +57,55 @@ const Display = ({ speed, width, text }) => {
     }
 
     // eslint-disable-next-line
-    text = santitiseCTags(originalText);
-    text = sanitiseUTags(text);
+    text = originalText.replace(
+      /\[\/*(([cC](:#[a-zA-Z0-9]{6})*)|([uU]))\]/g,
+      ""
+    );
 
     // Parse bold tags
-    if (text.includes("[B]")) {
+    if (/\[[bB]\]/g.test(text)) {
       let boldFlag = false;
-      let tempArray = []
+      let tempArray = [];
       for (let i = 0; i < textWithoutTags.length + 4; i++) {
-        if (text.substr(i, 3) === "[B]") {
+        if (/\[[bB]\]/g.test(text.substr(i, 3))) {
           boldFlag = true;
           text = text.slice(0, i) + text.slice(i + 3);
-          i-=1
-        } else if (text.substr(i, 4) === "[/B]") {
+          i -= 1;
+        } else if (/\[\/[bB]\]/g.test(text.substr(i, 4))) {
           boldFlag = false;
           text = text.slice(0, i) + text.slice(i + 4);
-          i-=1
+          i -= 1;
         } else {
           if (boldFlag && !tempArray.includes(i + Number(width))) {
-            tempArray.push(i + Number(width))
+            tempArray.push(i + Number(width));
             setBoldArray((oldArray) => [...oldArray, i + Number(width)]);
-            setDefaultBoldArray((oldArray) => [
-              ...oldArray,
-              i + Number(width),
-            ]);
+            setDefaultBoldArray((oldArray) => [...oldArray, i + Number(width)]);
           }
         }
       }
     }
     // eslint-disable-next-line
-    text = sanitiseBTags(originalText);
-    text = santitiseCTags(text);
+    text = originalText.replace(
+      /\[\/*(([cC](:#[a-zA-Z0-9]{6})*)|([bB]))\]/g,
+      ""
+    );
 
     // Parse underline tags
-    if (text.includes("[U]")) {
+    if (/\[[uU]\]/g.test(text)) {
       let underlineFlag = false;
-      let tempArray = []
+      let tempArray = [];
       for (let i = 0; i < textWithoutTags.length + 4; i++) {
-        if (text.substr(i, 3) === "[U]") {
+        if (/\[[uU]\]/g.test(text.substr(i, 3))) {
           underlineFlag = true;
           text = text.slice(0, i) + text.slice(i + 3);
-          i-=1
-        } else if (text.substr(i, 4) === "[/U]") {
+          i -= 1;
+        } else if (/\[\/[uU]\]/g.test(text.substr(i, 4))) {
           underlineFlag = false;
           text = text.slice(0, i) + text.slice(i + 4);
-          i-=1
+          i -= 1;
         } else {
           if (underlineFlag && !tempArray.includes(i + Number(width))) {
-            tempArray.push(i + Number(width))
+            tempArray.push(i + Number(width));
             setUnderlineArray((oldArray) => [...oldArray, i + Number(width)]);
             setDefaultUnderlineArray((oldArray) => [
               ...oldArray,
@@ -143,7 +120,7 @@ const Display = ({ speed, width, text }) => {
     // Start initiate the arrray.
     setDisplayArray(new Array(Number(width)).fill("\xa0"));
   }, []);
-  console.log(boldArray);
+
   useEffect(() => {
     if (cleanText !== "") {
       if (currentChar < cleanText.length + Number(width)) {
